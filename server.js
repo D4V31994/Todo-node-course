@@ -52,6 +52,7 @@ app.post('/todos', function (req, res) {
 	res.json(body);
 });
 
+// DELETE /todos/:id
 
 app.listen(PORT, function() {
 	console.log('Express listening on port ' + PORT + '!');

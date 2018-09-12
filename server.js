@@ -66,7 +66,7 @@ app.delete('/todos/:id', function (req, res) {
 });
 
 // PUT /todos/:id
-app.put('/todos:/id', function (req, res) {
+app.put('/todos/:id', function (req, res) {
 	var todoID = parseInt (req.params.id, 10);
 	var matchedTodo = _.findWhere(todos, {id: todoID});
 	var body = _.pick(req.body, 'description', 'completed');
@@ -97,5 +97,3 @@ app.listen(PORT, function() {
 	console.log('Express listening on port ' + PORT + '!');
 });
 
-//note, for lines 69-94, got stuck. POSTMAN PUT request wasn't working.
-// don't forget to push when corrected, to both GITHUB and HEROKU (git push after git commit -am " ") (git push heroku)

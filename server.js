@@ -64,7 +64,6 @@ app.delete('/todos/:id', function (req, res) {
 	 	res.json(matchedTodo);
 	 }
 });
-<<<<<<< HEAD
 
 // PUT /todos/:id
 app.put('/todos:/id', function (req, res) {
@@ -93,8 +92,6 @@ app.put('/todos:/id', function (req, res) {
 	_.extend(matchedTodo, validAttributes);
 	res.json(matchedTodo);
 });
-=======
->>>>>>> 82248b486e452aa1c2bb00497b9820275b715509
 
 app.listen(PORT, function() {
 	console.log('Express listening on port ' + PORT + '!');

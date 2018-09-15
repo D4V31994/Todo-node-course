@@ -13,9 +13,25 @@ app.get('/', function (req, res) {
 	res.send('Todo API Root');
 });
 
-// GET /todos
+// GET /todos, and the var queryParams = /todos?completed=true
 app.get('/todos', function (req, res) {
-	res.json(todos);
+	var queryParams = req.query; 
+	var filteredTodos = todos;
+
+	// if has property && completed === 'true'
+	// call filteredTodos = _.where(filteredTodos, 'true')
+	//else if has property && completed is 'false'
+	//I struggled w the code below, refer to using && and the var for query and also var.completed
+
+	if (queryParams.hasOwnProperty('completed') && queryParams.completed === 'true'){
+		filteredTodos = _.where(filteredTodos, {completed: true});
+	} else if (queryParams.hasOwnProperty('completed') && queryParams.completed ==='false'){
+		filteredTodos = _.where(filteredTodos, {completed: false});
+	}
+
+
+
+	res.json(filteredTodos); //changed from (todos);
 });
 
 // GET /todos/:id 

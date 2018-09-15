@@ -21,7 +21,7 @@ app.get('/todos', function (req, res) {
 	// if has property && completed === 'true'
 	// call filteredTodos = _.where(filteredTodos, 'true')
 	//else if has property && completed is 'false'
-	//I struggled w the code below, refer to using && and the var for query and also var.completed
+	//I struggled w the code below,(26-36); refer to using && and the var for query and also var.completed
 
 	if (queryParams.hasOwnProperty('completed') && queryParams.completed === 'true'){
 		filteredTodos = _.where(filteredTodos, {completed: true});
@@ -29,7 +29,11 @@ app.get('/todos', function (req, res) {
 		filteredTodos = _.where(filteredTodos, {completed: false});
 	}
 
-
+	if (queryParams.hasOwnProperty('q') && queryParams.q.length > 0) {
+		filteredTodos = _.filter(filteredTodos, function (todo) {
+			return todo.description.toLowerCase().indexOf(queryParams.q.toLowerCase()) > -1;
+		});
+	}
 
 	res.json(filteredTodos); //changed from (todos);
 });

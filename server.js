@@ -9,13 +9,13 @@ var todoNextId = 1;
 
 app.use(bodyParser.json());
 
-app.get('/', function (req, res) {
+app.get('/', function(req, res) {
 	res.send('Todo API Root');
 });
 
 // GET /todos, and the var queryParams = /todos?completed=true
-app.get('/todos', function (req, res) {
-	var queryParams = req.query; 
+app.get('/todos', function(req, res) {
+	var queryParams = req.query;
 	var filteredTodos = todos;
 
 	// if has property && completed === 'true'
@@ -23,14 +23,18 @@ app.get('/todos', function (req, res) {
 	//else if has property && completed is 'false'
 	//I struggled w the code below,(26-36); refer to using && and the var for query and also var.completed
 
-	if (queryParams.hasOwnProperty('completed') && queryParams.completed === 'true'){
-		filteredTodos = _.where(filteredTodos, {completed: true});
-	} else if (queryParams.hasOwnProperty('completed') && queryParams.completed ==='false'){
-		filteredTodos = _.where(filteredTodos, {completed: false});
+	if (queryParams.hasOwnProperty('completed') && queryParams.completed === 'true') {
+		filteredTodos = _.where(filteredTodos, {
+			completed: true
+		});
+	} else if (queryParams.hasOwnProperty('completed') && queryParams.completed === 'false') {
+		filteredTodos = _.where(filteredTodos, {
+			completed: false
+		});
 	}
 
 	if (queryParams.hasOwnProperty('q') && queryParams.q.length > 0) {
-		filteredTodos = _.filter(filteredTodos, function (todo) {
+		filteredTodos = _.filter(filteredTodos, function(todo) {
 			return todo.description.toLowerCase().indexOf(queryParams.q.toLowerCase()) > -1;
 		});
 	}
@@ -39,9 +43,11 @@ app.get('/todos', function (req, res) {
 });
 
 // GET /todos/:id 
-app.get('/todos/:id', function (req, res) {
-	var todoID = parseInt (req.params.id, 10);
-	var matchedTodo = _.findWhere(todos, {id: todoID});
+app.get('/todos/:id', function(req, res) {
+	var todoID = parseInt(req.params.id, 10);
+	var matchedTodo = _.findWhere(todos, {
+		id: todoID
+	});
 
 	if (matchedTodo) {
 		res.json(matchedTodo);
@@ -51,8 +57,8 @@ app.get('/todos/:id', function (req, res) {
 });
 
 // POST /todos
-app.post('/todos', function (req, res) {
-	var body = _.pick(req.body, 'description', 'completed'); 
+app.post('/todos', function(req, res) {
+	var body = _.pick(req.body, 'description', 'completed');
 	// Use _.pick to only pick description and completed
 
 
@@ -73,35 +79,41 @@ app.post('/todos', function (req, res) {
 });
 
 // DELETE /todos/:id
-app.delete('/todos/:id', function (req, res) {
-	var todoID = parseInt (req.params.id, 10);
-	var matchedTodo = _.findWhere(todos, {id: todoID});
+app.delete('/todos/:id', function(req, res) {
+	var todoID = parseInt(req.params.id, 10);
+	var matchedTodo = _.findWhere(todos, {
+		id: todoID
+	});
 
 	if (!matchedTodo) {
-		res.status(404).json({"error": "no todo found with that id"});
+		res.status(404).json({
+			"error": "no todo found with that id"
+		});
 	} else {
 		todos = _.without(todos, matchedTodo);
-	 	res.json(matchedTodo);
-	 }
+		res.json(matchedTodo);
+	}
 });
 
 // PUT /todos/:id
-app.put('/todos/:id', function (req, res) {
-	var todoID = parseInt (req.params.id, 10);
-	var matchedTodo = _.findWhere(todos, {id: todoID});
+app.put('/todos/:id', function(req, res) {
+	var todoID = parseInt(req.params.id, 10);
+	var matchedTodo = _.findWhere(todos, {
+		id: todoID
+	});
 	var body = _.pick(req.body, 'description', 'completed');
 	var validAttributes = {};
 
 	if (!matchedTodo) {
 		return res.status(404).send();
-	} 
+	}
 	//if the 404 runs, the code below does not. ! is the not operator.
 
 	if (body.hasOwnProperty('completed') && _.isBoolean(body.completed)) {
 		validAttributes.completed = body.completed;
 	} else if (body.hasOwnProperty('completed')) {
 		return res.status(400).send();
-	} 
+	}
 
 	if (body.hasOwnProperty('description') && _.isString(body.description) && body.description.trim().length > 0) {
 		validAttributes.description = body.description;
@@ -116,4 +128,3 @@ app.put('/todos/:id', function (req, res) {
 app.listen(PORT, function() {
 	console.log('Express listening on port ' + PORT + '!');
 });
-

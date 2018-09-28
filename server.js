@@ -16,31 +16,26 @@ app.get('/', function(req, res) {
 
 // GET /todos, and the var queryParams = /todos?completed=true
 app.get('/todos', function(req, res) {
-	var queryParams = req.query;
-	var filteredTodos = todos;
+	var query = req.query;
+	var where = {};
 
-	// if has property && completed === 'true'
-	// call filteredTodos = _.where(filteredTodos, 'true')
-	//else if has property && completed is 'false'
-	//I struggled w the code below,(26-36); refer to using && and the var for query and also var.completed
-
-	if (queryParams.hasOwnProperty('completed') && queryParams.completed === 'true') {
-		filteredTodos = _.where(filteredTodos, {
-			completed: true
-		});
-	} else if (queryParams.hasOwnProperty('completed') && queryParams.completed === 'false') {
-		filteredTodos = _.where(filteredTodos, {
-			completed: false
-		});
+	if (query.hasOwnProperty('completed') && query.completed === 'true') {
+		where.completed = true;
+	} else if (query.hasOwnProperty('completed') && query.completed === 'false') {
+		where.completed = false;
 	}
 
-	if (queryParams.hasOwnProperty('q') && queryParams.q.length > 0) {
-		filteredTodos = _.filter(filteredTodos, function(todo) {
-			return todo.description.toLowerCase().indexOf(queryParams.q.toLowerCase()) > -1;
-		});
+	if (query.hasOwnProperty('q') && query.q.length > 0) {
+		where.description = {
+			$like: '%' + query.q + '%'
+		};
 	}
 
-	res.json(filteredTodos); //changed from (todos);
+	db.todo.findAll({where: where}).then(function (todos) {
+		res.json(todos);
+	}, function (e) {
+		res.status(500).send();
+	});
 });
 
 // GET /todos/:id 

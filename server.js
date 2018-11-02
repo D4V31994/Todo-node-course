@@ -19,7 +19,9 @@ app.get('/', function(req, res) {
 // GET /todos, and the var queryParams = /todos?completed=true
 app.get('/todos', middleware.requireAuthentication, function(req, res) {
 	var query = req.query;
-	var where = {};
+	var where = {
+		userId: req.user.get('id')
+	}; //add clause, all todo items where userid = personsid //req.user.get('id')
 
 	if (query.hasOwnProperty('completed') && query.completed === 'true') {
 		where.completed = true;
@@ -46,7 +48,13 @@ app.get('/todos', middleware.requireAuthentication, function(req, res) {
 app.get('/todos/:id', middleware.requireAuthentication, function(req, res) {
 	var todoID = parseInt(req.params.id, 10);
 
-	db.todo.findById(todoID).then(function(todo) {
+	//switch to findOne(), match where{} id matches id passed, userID matches userID on req.
+	db.todo.findOne({
+		where: {
+			id: todoID,
+			userId: req.user.get('id')
+		}
+	}).then(function(todo) {
 		if (!!todo) {
 			res.json(todo.toJSON());
 		} else {
@@ -92,9 +100,10 @@ app.post('/todos', middleware.requireAuthentication, function(req, res) {
 app.delete('/todos/:id', middleware.requireAuthentication, function(req, res) {
 	var todoID = parseInt(req.params.id, 10);
 
-	db.todo.destroy({
+	db.todo.destroy({ //update to check if userId = request.user.getID
 		where: {
-			id: todoID
+			id: todoID,
+			userId: req.user.get('id')
 		}
 	}).then(function(rowsDeleted) {
 		if (rowsDeleted === 0) {
@@ -123,7 +132,12 @@ app.put('/todos/:id', middleware.requireAuthentication, function(req, res) {
 		attributes.description = body.description;
 	}
 
-	db.todo.findById(todoID).then(function(todo) {
+	db.todo.findOne({
+		where: {
+			id: todoID,
+			userId: req.user.get('id')
+		}
+	}).then(function(todo) { // call findOne w where clause
 		if (todo) {
 			todo.update(attributes)
 				.then(function(todo) {

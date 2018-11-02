@@ -17,46 +17,41 @@ var Todo = sequelize.define('todo', {
 		allowNull: false,
 		defaultValue: false
 	}
-})
+});
+
+var User = sequelize.define('user', {
+	email: Sequelize.STRING
+});
+
+Todo.belongsTo(User); //helps create association/ is part of foreign key
+User.hasMany(Todo); //helps create association/ is part of foreign key
 
 sequelize.sync({
 	//force: true
 }).then(function() {
 	console.log('Everything is synced');
 
-	Todo.findById(2).then(function (todo) {
-		if (todo) {
-			console.log(todo.toJSON());
-		} else {
-			console.log('Todo not found!');
-		}
+	User.findById(1).then(function(user) {
+		user.getTodos({
+			where: {
+				completed: false
+			}
+		}).then(function(todos) {
+			todos.forEach(function (todo) {
+				console.log(todo.toJSON());
+			});
+		});
 	});
 
-	// Todo.create({
-	// 	description: 'Take out trash'
-	// }).then(function(todo) {
-	// 	return Todo.create({
-	// 		description: 'Clean office'
-	// 	});
+	// User.create({
+	// 	email: 'david@example.com'
 	// }).then(function() {
-	// 	// return Todo.findById(1) // findById is a sequelize method found on sequelize docs.
-	// 	return Todo.findAll({
-	// 		where: {
-	// 			description: {
-	// 				$like: '%Office%'
-	// 			}
-	// 		}
+	// 	return Todo.create({
+	// 		description: 'Clean yard'
 	// 	});
-	// }).then(function (todos) {
-	// 	if (todos) {
-	// 		todos.forEach(function (todo) {
-	// 			console.log(todo.toJSON()); //->makes it easier to read/converts to JSON
-	// 		});
-
-	// 	} else {
-	// 		console.log('no todo found!');
-	// 	}
-	// }).catch(function(e) {
-	// 	console.log(e);
+	// }).then(function(todo) {
+	// 	User.findById(1).then(function(user) {
+	// 		user.addTodo(todo);
+	// 	});
 	// });
- });
+});
